@@ -8,20 +8,29 @@ import (
 )
 
 func main() {
+	//Prevalidate args
+	if len(os.Args) < 3 {
+		fmt.Println("Two parameters expected (path, destAddr)")
+		os.Exit(1)
+	}
 
-	//ARGS STUFF
+	//Take only given args
 	args := os.Args[1:]
-
 	filePath := args[0]
 	fileDestination := args[1]
 
-	fmt.Println(filePath)
-	fmt.Println(fileDestination)
-
-	app.InitializeClient()
+	err := app.InitializeClient()
+	if err != nil {
+		os.Exit(1)
+	}
 
 	//Work
-	app.SendFile(filePath, fileDestination)
+	err = app.SendFile(filePath, fileDestination)
+	if err != nil {
+		os.Exit(1)
+	}
 
 	app.StopClient()
+
+	os.Exit(0)
 }
