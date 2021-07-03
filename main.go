@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/nknx-org/easyTransfer/app"
@@ -20,8 +21,10 @@ func main() {
 
 	//Take only given args
 	args := os.Args[1:]
-	filePath := args[0]
+	filePathArg := args[0]
 	fileDestination := args[1]
+
+	filePathArr := strings.Split(filePathArg, ";")
 
 	//Take optional timeout param
 	var timeOut = DEFAULT_TIMEOUT
@@ -43,9 +46,11 @@ func main() {
 	}
 
 	//Work
-	err = app.SendFile(filePath, fileDestination)
-	if err != nil {
-		os.Exit(1)
+	for i := 0; i < len(filePathArr); i++ {
+		err = app.SendFile(filePathArr[i], fileDestination)
+		if err != nil {
+			os.Exit(1)
+		}
 	}
 
 	app.StopClient()
