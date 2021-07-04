@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/nknx-org/easyTransfer/app"
@@ -46,16 +47,25 @@ func main() {
 	}
 
 	//Work
+	var wg sync.WaitGroup
 	for i := 0; i < len(filePathArr); i++ {
-		err = app.SendFile(filePathArr[i], fileDestination)
-		if err != nil {
-			os.Exit(1)
-		}
+		wg.Add(1)
+		go sendFile(filePathArr[i], fileDestination, &wg)
 	}
+	wg.Wait()
 
 	app.StopClient()
 
 	os.Exit(0)
+}
+
+func sendFile(path string, destination string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	err := app.SendFile(path, destination)
+	if err != nil {
+		os.Exit(1)
+	}
 }
 
 func timeout(timeout int) {
