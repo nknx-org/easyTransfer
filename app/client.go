@@ -82,6 +82,7 @@ func SendFile(path string, destination string) error {
 		fmt.Println(err)
 		return err
 	}
+	fmt.Println("Sending file ", fileData.Name, "to ", destination)
 
 	onMsg, err := client.SendBinary(nkn.NewStringArray(destination), bytes, nkn.GetDefaultMessageConfig())
 
@@ -91,7 +92,7 @@ func SendFile(path string, destination string) error {
 	}
 
 	<-onMsg.C
-	fmt.Println("File sent!")
+	fmt.Println("File", fileData.Name, "received by ", destination)
 
 	return nil
 }
